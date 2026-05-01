@@ -14,80 +14,82 @@
   .retro-font { font-family: 'Press Start 2P', cursive; }
 </style>
 </head>
-<body class="h-screen overflow-hidden bg-black px-3 py-3 text-neutral-900 sm:px-4 sm:py-4 flex flex-col">
+<body class="h-screen overflow-hidden bg-[#f3edf1] px-3 py-3 text-neutral-900 sm:px-4 sm:py-4 flex flex-col">
 <div class="mx-auto flex w-full max-w-[1100px] flex-1 min-h-0 flex-col">
 
-  <div class="overflow-hidden rounded-none border border-black bg-black flex-1 min-h-0 flex flex-col shadow-none">
-    <div class="flex flex-1 min-h-0 divide-x divide-neutral-900">
+  <div class="overflow-hidden rounded-none border border-neutral-200 bg-white flex-1 min-h-0 flex flex-col shadow-sm">
+    <div class="flex flex-1 min-h-0 divide-x divide-neutral-200">
       <!-- Left: World Grid Section -->
       <div class="flex flex-col flex-1 min-w-0 bg-black">
-        <div class="border-b border-neutral-900 px-4 py-3 flex-shrink-0 flex items-center justify-between gap-4 bg-black text-neutral-100">
+        <div class="border-b border-slate-800 px-4 py-3 flex-shrink-0 flex items-center justify-between gap-4 bg-black text-neutral-100">
           <div class="flex items-center gap-4">
-            <div class="text-sm font-semibold tracking-wide">World Grid</div>
-            <div id="percepts-box" class="flex items-center gap-1.5">
-              <span class="text-[10px] font-medium text-neutral-500">None</span>
+            <div class="text-sm font-semibold tracking-wide text-white">World Grid</div>
+            <div id="percepts-box" class="ml-3">
+              <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white text-[11px] font-medium text-black">None</span>
             </div>
           </div>
-          <button onclick="openSettings()" class="rounded-md p-1.5 text-neutral-400 hover:bg-neutral-800 transition" title="Settings">
+          <button onclick="openSettings()" class="rounded-md p-1.5 text-neutral-200 hover:bg-neutral-700 transition" title="Settings">
             <i data-lucide="settings" class="h-4 w-4"></i>
           </button>
         </div>
-        <div class="flex flex-col gap-2 p-2 flex-1 min-h-0 overflow-auto bg-black">
-          <div class="flex flex-col items-center gap-2 py-1">
-            <div id="grid" class="grid gap-1"></div>
+        <div class="flex flex-col gap-2 p-4 flex-1 min-h-0 overflow-auto bg-[#f7f0f4]">
+          <div class="flex flex-col items-center gap-2 py-2">
+            <div class="bg-black p-3 rounded-md shadow-sm inline-block">
+              <div id="grid" class="grid gap-1"></div>
+            </div>
           </div>
         </div>
-        <div class="border-t border-neutral-900 p-3 flex-shrink-0 bg-black">
+        <div class="border-t border-slate-200 p-3 flex-shrink-0 bg-[#f4ecef]">
           <div class="flex gap-2">
-            <button class="inline-flex flex-1 items-center justify-center gap-2 rounded-md border border-neutral-900 bg-neutral-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-neutral-800" onclick="initGame()">
+            <button class="inline-flex flex-1 items-center justify-center gap-2 rounded-md border border-rose-900 bg-rose-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-rose-800 shadow-sm" onclick="initGame()">
               <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
               <span>New Episode</span>
             </button>
-            <button class="inline-flex w-fit items-center justify-center gap-2 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm font-medium text-neutral-900 transition hover:bg-neutral-50" onclick="toggleAuto()" id="auto-btn">
+            <button class="inline-flex w-fit items-center justify-center gap-2 rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm font-medium text-neutral-100 transition hover:bg-neutral-800" onclick="toggleAuto()" id="auto-btn">
               <i data-lucide="play" class="h-4 w-4"></i>
             </button>
-            <button class="inline-flex w-fit items-center justify-center gap-2 rounded-md border border-neutral-300 bg-transparent px-3 py-2 text-sm font-medium text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900" onclick="stepAgent()">
+            <button class="inline-flex w-fit items-center justify-center gap-2 rounded-md border border-neutral-700 bg-transparent px-3 py-2 text-sm font-medium text-neutral-300 transition hover:bg-neutral-800 hover:text-white" onclick="stepAgent()">
               <i data-lucide="step-forward" class="h-4 w-4"></i>
             </button>
           </div>
         </div>
-        <div id="status-bar" class="px-4 py-2.5 text-center font-mono text-xs text-neutral-400 border-t border-neutral-900 flex-shrink-0 transition-colors bg-black">Ready</div>
+        <div id="status-bar" class="px-4 py-2.5 text-center font-mono text-xs text-rose-700 bg-[#f4ecef] border-t border-slate-200 flex-shrink-0 transition-colors">Ready</div>
       </div>
 
       <!-- Right: Tabbed Sidebar Section -->
-      <div class="flex flex-col w-[320px] flex-shrink-0 bg-neutral-950 text-neutral-100">
-        <div class="flex border-b border-neutral-900 bg-neutral-950 p-1 gap-1 flex-shrink-0">
-          <button onclick="switchTab('metrics')" id="tab-metrics" class="tab-btn flex-1 rounded-md px-3 py-1.5 text-[11px] font-semibold transition-all bg-neutral-100 text-neutral-900 shadow-sm border border-neutral-300">Metrics</button>
-          <button onclick="switchTab('kb')" id="tab-kb" class="tab-btn flex-1 rounded-md px-3 py-1.5 text-[11px] font-semibold transition-all text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900">KB</button>
-          <button onclick="switchTab('log')" id="tab-log" class="tab-btn flex-1 rounded-md px-3 py-1.5 text-[11px] font-semibold transition-all text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900">Log</button>
+      <div class="flex flex-col w-[320px] flex-shrink-0 bg-[#f3ecef] text-neutral-900">
+        <div class="flex border-b border-slate-200 bg-slate-50/50 p-1 gap-1 flex-shrink-0">
+          <button onclick="switchTab('metrics')" id="tab-metrics" class="tab-btn flex-1 rounded-md px-3 py-1.5 text-[11px] font-semibold transition-all bg-white text-slate-900 shadow-sm border border-slate-200">Metrics</button>
+          <button onclick="switchTab('kb')" id="tab-kb" class="tab-btn flex-1 rounded-md px-3 py-1.5 text-[11px] font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-100/50">KB</button>
+          <button onclick="switchTab('log')" id="tab-log" class="tab-btn flex-1 rounded-md px-3 py-1.5 text-[11px] font-semibold transition-all text-slate-500 hover:text-slate-700 hover:bg-slate-100/50">Log</button>
         </div>
         
         <div class="flex-1 min-h-0 relative">
           <div id="pane-metrics" class="tab-pane absolute inset-0 overflow-y-auto px-4 py-2">
-            <div class="flex items-center justify-between border-b border-neutral-800 py-2.5">
-              <span class="text-xs text-neutral-400">Inference Steps</span>
-              <span class="font-mono text-sm font-medium text-neutral-100" id="m-infer">0</span>
+            <div class="flex items-center justify-between border-b border-slate-100 py-2.5">
+              <span class="text-xs text-slate-500">Inference Steps</span>
+              <span class="font-mono text-sm font-medium text-slate-900" id="m-infer">0</span>
             </div>
             <div class="flex items-center justify-between border-b border-neutral-800 py-2.5">
-              <span class="text-xs text-neutral-400">Cells Visited</span>
-              <span class="font-mono text-sm font-medium text-neutral-100" id="m-visited">0</span>
+              <span class="text-xs text-slate-500">Cells Visited</span>
+              <span class="font-mono text-sm font-medium text-slate-900" id="m-visited">0</span>
             </div>
             <div class="flex items-center justify-between border-b border-neutral-800 py-2.5">
-              <span class="text-xs text-neutral-400">Safe Proven</span>
-              <span class="font-mono text-sm font-medium text-neutral-100" id="m-safe">0</span>
+              <span class="text-xs text-slate-500">Safe Proven</span>
+              <span class="font-mono text-sm font-medium text-slate-900" id="m-safe">0</span>
             </div>
             <div class="flex items-center justify-between py-2.5">
-              <span class="text-xs text-neutral-400">KB Clauses</span>
-              <span class="font-mono text-sm font-medium text-neutral-100" id="m-kb">0</span>
+              <span class="text-xs text-slate-500">KB Clauses</span>
+              <span class="font-mono text-sm font-medium text-slate-900" id="m-kb">0</span>
             </div>
           </div>
 
           <div id="pane-kb" class="tab-pane absolute inset-0 overflow-y-auto px-4 py-3 hidden">
-            <div class="font-mono text-[10px] leading-relaxed text-neutral-400" id="kb-display">-</div>
+            <div class="font-mono text-[10px] leading-relaxed text-slate-500" id="kb-display">-</div>
           </div>
 
           <div id="pane-log" class="tab-pane absolute inset-0 overflow-y-auto px-4 py-3 hidden">
-            <div class="font-mono text-[10px] leading-relaxed text-neutral-400" id="log"></div>
+            <div class="font-mono text-[10px] leading-relaxed text-slate-500" id="log"></div>
           </div>
         </div>
       </div>

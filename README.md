@@ -47,7 +47,7 @@ The agent prioritizes:
 
 ## 📖 Usage
 
-1. Open `wampus.html` in any modern web browser.
+1. Open `wumpus.html` in any modern web browser.
 2. Click **New Episode** to generate a random world.
 3. Use the **Play** button to start the auto-simulation or **Step** to advance manually.
 4. Click the **Gear Icon** to adjust grid size and speed.

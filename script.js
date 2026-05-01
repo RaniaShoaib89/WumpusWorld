@@ -1,12 +1,12 @@
 //GLOBAL CONFIG & STATE
 let ROWS, COLS, world, agent, kb, metrics, autoTimer = null, stepSpeed = 450, autoRunning = false;
 const DIRS = [{ dr: -1, dc: 0 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }, { dr: 0, dc: 1 }];
-const STATUS_BASE = "w-full px-4 py-3 text-center font-mono text-xs border-t border-slate-100 transition-colors";
+const STATUS_BASE = "w-full px-4 py-3 text-center font-mono text-xs border-t border-slate-200 transition-colors";
 const STATUS_VARIANTS = {
-  default: "bg-slate-50 text-slate-400",
-  running: "bg-sky-50/50 text-sky-600",
-  dead: "bg-rose-50 text-rose-600",
-  won: "bg-emerald-50 text-emerald-600"
+  default: "bg-[#f4ecef] text-rose-700",
+  running: "bg-rose-50 text-rose-700",
+  dead: "bg-rose-100 text-rose-900",
+  won: "bg-amber-50 text-amber-700"
 };
 const LOG_CLASS_MAP = {
   "log-safe": "text-emerald-600",
@@ -40,10 +40,10 @@ function switchTab(id) {
 function syncAutoButton() {
   const btn = document.getElementById("auto-btn");
   if (autoRunning) {
-    btn.className = "inline-flex items-center justify-center gap-2 rounded-md border border-slate-200 bg-transparent px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900";
+    btn.className = "inline-flex items-center justify-center gap-2 rounded-md border border-rose-200 bg-white px-3 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-50 hover:text-rose-900";
     btn.innerHTML = `${lucideIcon("pause", "h-4 w-4")}`;
   } else {
-    btn.className = "inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 transition hover:bg-slate-50";
+    btn.className = "inline-flex items-center justify-center gap-2 rounded-md border border-rose-200 bg-white px-3 py-2 text-sm font-medium text-rose-900 transition hover:bg-rose-50";
     btn.innerHTML = `${lucideIcon("play", "h-4 w-4")}`;
   }
   refreshIcons();
