@@ -53,65 +53,70 @@ function renderAll() {
   const grid = document.getElementById("grid");
   grid.style.gridTemplateColumns = `repeat(${COLS}, minmax(0, 1fr))`;
   grid.innerHTML = "";
-  const reveal = !agent.alive || agent.won;
   for (let r = ROWS - 1; r >= 0; r--) for (let c = 0; c < COLS; c++) {
     const cell = document.createElement("div");
-    cell.className = "relative flex h-[72px] w-[72px] flex-col items-center justify-center rounded-md border font-mono transition-colors";
+    cell.className = "relative flex h-[84px] w-[84px] flex-col items-center justify-center border border-neutral-300 bg-[#f7f0f4] font-mono transition-colors";
     const key = k(r, c), isA = agent.r === r && agent.c === c, isV = agent.visited.has(key), isS = agent.safe.has(key);
     const iP = agent.inferredPit.has(key), iW = agent.inferredWumpus.has(key);
-    if (reveal && world.pits[r][c]) cell.classList.add("border-rose-300", "bg-rose-50");
-    else if (reveal && world.wumpus[r][c]) cell.classList.add("border-amber-300", "bg-amber-50");
-    else if (isV) cell.classList.add("border-slate-200", "bg-white");
-    else if (isS) cell.classList.add("border-emerald-300", "bg-emerald-50");
-    else cell.classList.add("border-slate-200", "bg-slate-100");
-    if (isA) cell.classList.add("border-sky-300", "ring-2", "ring-sky-200");
+    if (world.pits[r][c]) cell.classList.add("bg-[#6f0012]", "border-[#4d000c]");
+    else if (world.wumpus[r][c]) cell.classList.add("bg-neutral-600", "border-neutral-800");
+    else if (world.gold[r][c]) cell.classList.add("bg-[#f7e7b5]", "border-[#d0a24a]");
+    else if (isV) cell.classList.add("bg-white", "border-neutral-300");
+    else if (isS) cell.classList.add("bg-rose-200", "border-rose-300");
+    else cell.classList.add("bg-[#f6a5c0]", "border-[#e78bab]");
+    if (isA) cell.classList.add("ring-2", "ring-black", "ring-inset");
 
     const coord = document.createElement("div");
-    coord.className = "absolute left-1.5 top-1 text-[8px] text-slate-400";
+    coord.className = "absolute left-1.5 top-1 text-[10px] font-medium text-neutral-500";
     coord.textContent = `${r + 1},${c + 1}`;
     cell.appendChild(coord);
 
     const icon = document.createElement("div");
-    icon.className = "relative flex h-8 w-8 items-center justify-center text-slate-800";
+    icon.className = "relative flex h-10 w-10 items-center justify-center text-neutral-900";
+    const percepts = getPercepts(r, c);
     
     if (isA) {
       if (!agent.alive) {
         const hazType = world.pits[r][c] ? "circle-dot" : (world.wumpus[r][c] ? "ghost" : null);
         if (hazType) {
           const bgHaz = document.createElement("div");
-          bgHaz.className = "absolute inset-0 flex items-center justify-center opacity-25 scale-125 text-rose-500/50";
+          bgHaz.className = "absolute inset-0 flex items-center justify-center opacity-35 scale-125 text-black/40";
           bgHaz.innerHTML = lucideIcon(hazType, "h-6 w-6");
           icon.appendChild(bgHaz);
         }
       }
       const agentIcon = document.createElement("div");
       agentIcon.className = "relative z-10";
-      agentIcon.innerHTML = lucideIcon(agent.alive ? "bot" : "skull", "h-5 w-5");
+      agentIcon.innerHTML = lucideIcon(agent.alive ? "bot" : "skull", "h-7 w-7 text-neutral-900");
       icon.appendChild(agentIcon);
     }
-    else if (reveal && world.pits[r][c]) icon.innerHTML = lucideIcon("circle-dot", "h-5 w-5");
-    else if (reveal && world.wumpus[r][c]) icon.innerHTML = lucideIcon("ghost", "h-5 w-5");
-    else if (isV && world.gold[r][c] && agent.won) icon.innerHTML = lucideIcon("trophy", "h-5 w-5");
+    else if (world.pits[r][c]) {
+      icon.className = "relative flex h-14 w-14 items-center justify-center rounded-lg border-2 border-white bg-black text-white shadow-sm";
+      icon.textContent = "PIT";
+      icon.style.letterSpacing = "0.08em";
+      icon.style.fontSize = "12px";
+      icon.style.fontWeight = "700";
+    }
+    else if (world.wumpus[r][c]) icon.innerHTML = lucideIcon("ghost", "h-6 w-6 text-white");
+    else if (world.gold[r][c]) icon.innerHTML = lucideIcon("package", "h-6 w-6 text-amber-500");
     cell.appendChild(icon);
 
-    if (!isV && !isA) {
+    if (!isA) {
       const inf = document.createElement("div");
       inf.className = "absolute right-1 top-1";
-      if (iP || iW) inf.innerHTML = lucideIcon("triangle-alert", "h-3 w-3 text-rose-600");
-      else if (isS) inf.innerHTML = lucideIcon("badge-check", "h-3 w-3 text-emerald-600");
+      if (iP || iW) inf.innerHTML = lucideIcon("triangle-alert", "h-4 w-4 text-[#5f0010]");
+      else if (isS) inf.innerHTML = lucideIcon("badge-check", "h-4 w-4 text-rose-700");
+      else if (world.pits[r][c] || world.wumpus[r][c] || world.gold[r][c]) inf.innerHTML = "";
       cell.appendChild(inf);
     }
 
-    if (isV && !isA) {
-      const p = getPercepts(r, c);
-      if (p.breeze || p.stench || p.glitter) {
-        const pi = document.createElement("div");
-        pi.className = "absolute bottom-1 flex items-center gap-0.5 text-slate-500";
-        if (p.breeze) pi.innerHTML += lucideIcon("wind", "h-2.5 w-2.5");
-        if (p.stench) pi.innerHTML += lucideIcon("cloud", "h-2.5 w-2.5");
-        if (p.glitter) pi.innerHTML += lucideIcon("sparkles", "h-2.5 w-2.5");
-        cell.appendChild(pi);
-      }
+    if (!isA && (percepts.breeze || percepts.stench || percepts.glitter)) {
+      const pi = document.createElement("div");
+      pi.className = "absolute bottom-1 left-1 right-1 flex flex-wrap items-center justify-center gap-1 text-neutral-700";
+      if (percepts.breeze) pi.innerHTML += `<span class="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[9px] font-semibold text-blue-700">${lucideIcon("wind", "h-3 w-3")}<span>Breeze</span></span>`;
+      if (percepts.stench) pi.innerHTML += `<span class="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-1.5 py-0.5 text-[9px] font-semibold text-orange-700">${lucideIcon("cloud", "h-3 w-3")}<span>Stench</span></span>`;
+      if (percepts.glitter) pi.innerHTML += `<span class="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[9px] font-semibold text-amber-700">${lucideIcon("sparkles", "h-3 w-3")}<span>Glitter</span></span>`;
+      cell.appendChild(pi);
     }
     grid.appendChild(cell);
   }
@@ -122,10 +127,10 @@ function updatePercepts(r, c, p) {
   const box = document.getElementById("percepts-box");
   box.innerHTML = "";
   let any = false;
-  if (p.stench) { box.innerHTML += badge("cloud", "Stench", "border-orange-200 bg-orange-50 text-orange-700"); any = true; }
-  if (p.breeze) { box.innerHTML += badge("wind", "Breeze", "border-blue-200 bg-blue-50 text-blue-700"); any = true; }
-  if (p.glitter) { box.innerHTML += badge("sparkles", "Glitter", "border-amber-200 bg-amber-50 text-amber-700"); any = true; }
-  if (!any) box.innerHTML = '<span class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-400">None</span>';
+  if (p.stench) { box.innerHTML += badge("cloud", "Stench", "border-[#5f0010] bg-[#6f0012] text-white"); any = true; }
+  if (p.breeze) { box.innerHTML += badge("wind", "Breeze", "border-neutral-700 bg-white text-neutral-800"); any = true; }
+  if (p.glitter) { box.innerHTML += badge("sparkles", "Glitter", "border-[#d0a24a] bg-[#f7e7b5] text-neutral-800"); any = true; }
+  if (!any) box.innerHTML = '<span class="inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-white px-2.5 py-1 text-[11px] font-medium text-neutral-500">None</span>';
   refreshIcons();
 }
 
